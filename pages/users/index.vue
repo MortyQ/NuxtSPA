@@ -1,26 +1,38 @@
 <template>
-  <section>
-    <h1>Users</h1>
-    <ul>
-      <li v-for="(user, index) in users" :key="index">
-        <a href="#" @click.prevent="goTo(user)"> User {{ user }} </a>
-      </li>
-    </ul>
-  </section>
+	<section>
+		<h1>{{ pageTitle }}</h1>
+		<ul>
+			<li v-for="user in users" :key="user.id">
+				<h2>
+					User:
+					<a href="#" @click.prevent="goTo(user)"> {{ user.name }} </a>
+				</h2>
+			</li>
+		</ul>
+	</section>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      users: [1, 2, 3, 4, 5],
-    };
-  },
-  methods: {
-    goTo(user) {
-      this.$router.push("/users/" + user);
-      console.log(user);
-    },
-  },
-};
+  async	asyncData({ store, error }) {
+		try {
+			const users = await store.dispatch('users/fetchUsers')
+			return { users }
+		} catch (e) {
+			error(e)
+		}
+	},
+
+	data() {
+		return {
+			pageTitle: 'User Page',
+		}
+	},
+	methods: {
+		goTo(user) {
+			this.$router.push('/users/' + user.id)
+			console.log(user)
+		},
+	},
+}
 </script>
